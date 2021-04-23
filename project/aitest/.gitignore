@@ -1,0 +1,9 @@
+# Build directory
+######################
+build-GENERIC/
+build-GENERIC_OTA/
+build-GENERIC_S2/
+build-GENERIC_OTA/
+build-GENERIC_SPIRAM/
+build-TINYPICO/
+build-GENERIC_D2WD/

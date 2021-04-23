@@ -1,0 +1,8 @@
+[submodule "submodule/micropython"]
+	path = submodule/micropython
+	url = https://github.com/YanMinge/micropython
+        branch = master
+[submodule "submodule/esp-idf"]
+	path = submodule/esp-idf
+	url = https://github.com/espressif/esp-idf
+        branch = release/v4.3
