@@ -25,7 +25,7 @@ endif
 IDFPY_FLAGS += -D MICROPY_BOARD=$(BOARD) -B $(BUILD) $(CMAKE_ARGS)
 
 all:
-	idf.py $(IDFPY_FLAGS) build
+	rm -rf $(BUILD)/frozen_content.c && idf.py $(IDFPY_FLAGS) build
 	@$(PYTHON) makeimg.py \
 		$(BUILD)/bootloader/bootloader.bin \
 		$(BUILD)/partition_table/partition-table.bin \
