@@ -184,9 +184,13 @@ STATIC void machine_hw_spi_init_internal(
         changed = true;
     }
 
-    if (self->host != HSPI_HOST
-        #ifdef VSPI_HOST
-        && self->host != VSPI_HOST
+    if (
+        #if CONFIG_IDF_TARGET_ESP32
+        self->host != HSPI_HOST
+        #elif CONFIG_IDF_TARGET_ESP32S2
+        self->host != HSPI_HOST && self->host != VSPI_HOST
+        #elif CONFIG_IDF_TARGET_ESP32S3
+        self->host != SPI2_HOST && self->host != SPI3_HOST
         #endif
         ) {
         mp_raise_msg_varg(&mp_type_ValueError, MP_ERROR_TEXT("SPI(%d) doesn't exist"), self->host);
@@ -222,13 +226,23 @@ STATIC void machine_hw_spi_init_internal(
 
     // Select DMA channel based on the hardware SPI host
     int dma_chan = 0;
+    #ifdef HSPI_HOST
     if (self->host == HSPI_HOST) {
         dma_chan = 1;
-    #ifdef VSPI_HOST
-    } else if (self->host == VSPI_HOST) {
-        dma_chan = 2;
-    #endif
     }
+    #ifdef VSPI_HOST
+    else if (self->host == VSPI_HOST) {
+        dma_chan = 2;
+    }
+    #endif
+    #else
+    if (self->host == SPI2_HOST) {
+        dma_chan = 1;
+    }
+    else if (self->host == SPI3_HOST) {
+        dma_chan = 2;
+    }
+    #endif
 
     ret = spi_bus_initialize(self->host, &buscfg, dma_chan);
     switch (ret) {
@@ -402,6 +416,7 @@ mp_obj_t machine_hw_spi_make_new(const mp_obj_type_t *type, size_t n_args, size_
 
     machine_hw_spi_obj_t *self;
     const machine_hw_spi_default_pins_t *default_pins;
+    #ifdef HSPI_HOST
     if (args[ARG_id].u_int == HSPI_HOST) {
         self = &machine_hw_spi_obj[0];
         default_pins = &machine_hw_spi_default_pins[0];
@@ -409,6 +424,15 @@ mp_obj_t machine_hw_spi_make_new(const mp_obj_type_t *type, size_t n_args, size_
         self = &machine_hw_spi_obj[1];
         default_pins = &machine_hw_spi_default_pins[1];
     }
+    #else
+    if (args[ARG_id].u_int == SPI2_HOST) {
+        self = &machine_hw_spi_obj[0];
+        default_pins = &machine_hw_spi_default_pins[0];
+    } else {
+        self = &machine_hw_spi_obj[1];
+        default_pins = &machine_hw_spi_default_pins[1];
+    }
+    #endif
     self->base.type = &machine_hw_spi_type;
 
     machine_hw_spi_init_internal(

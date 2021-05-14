@@ -42,6 +42,9 @@
 #elif CONFIG_IDF_TARGET_ESP32S2
 #include "esp32s2/rom/rtc.h"
 #include "esp32s2/clk.h"
+#elif CONFIG_IDF_TARGET_ESP32S3
+#include "esp32s3/rom/rtc.h"
+#include "esp32s3/clk.h"
 #endif
 
 #include "py/obj.h"
@@ -81,6 +84,8 @@ STATIC mp_obj_t machine_freq(size_t n_args, const mp_obj_t *args) {
         esp_pm_config_esp32_t pm;
         #elif CONFIG_IDF_TARGET_ESP32S2
         esp_pm_config_esp32s2_t pm;
+        #elif CONFIG_IDF_TARGET_ESP32S3
+        esp_pm_config_esp32s3_t pm;
         #endif
         pm.max_freq_mhz = freq;
         pm.min_freq_mhz = freq;
@@ -273,7 +278,7 @@ STATIC const mp_rom_map_elem_t machine_module_globals_table[] = {
     #if CONFIG_IDF_TARGET_ESP32
     { MP_ROM_QSTR(MP_QSTR_TouchPad), MP_ROM_PTR(&machine_touchpad_type) },
     #endif
-    { MP_ROM_QSTR(MP_QSTR_ADC), MP_ROM_PTR(&machine_adc_type) },
+    // { MP_ROM_QSTR(MP_QSTR_ADC), MP_ROM_PTR(&machine_adc_type) },
     { MP_ROM_QSTR(MP_QSTR_DAC), MP_ROM_PTR(&machine_dac_type) },
     { MP_ROM_QSTR(MP_QSTR_I2C), MP_ROM_PTR(&machine_hw_i2c_type) },
     { MP_ROM_QSTR(MP_QSTR_SoftI2C), MP_ROM_PTR(&mp_machine_soft_i2c_type) },

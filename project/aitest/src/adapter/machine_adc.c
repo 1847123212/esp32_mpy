@@ -62,6 +62,8 @@ STATIC mp_obj_t madc_make_new(const mp_obj_type_t *type, size_t n_args, size_t n
     if (!initialized) {
         #if CONFIG_IDF_TARGET_ESP32S2
         adc1_config_width(ADC_WIDTH_BIT_13);
+        #elif CONFIG_IDF_TARGET_ESP32S3
+        adc1_config_width(ADC_WIDTH_BIT_13);
         #else
         adc1_config_width(ADC_WIDTH_BIT_12);
         #endif

@@ -36,6 +36,7 @@ set(MICROPY_SOURCE_DRIVERS
 
 set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/src/main.c
+    ${PROJECT_DIR}/src/ef_sqrt.c
     ${PROJECT_DIR}/src/adapter/uart.c
     ${PROJECT_DIR}/src/adapter/usb.c
     ${PROJECT_DIR}/src/adapter/gccollect.c
@@ -47,7 +48,7 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/src/adapter/machine_timer.c
     ${PROJECT_DIR}/src/adapter/machine_pin.c
     ${PROJECT_DIR}/src/adapter/machine_touchpad.c
-    ${PROJECT_DIR}/src/adapter/machine_adc.c
+    # ${PROJECT_DIR}/src/adapter/machine_adc.c
     ${PROJECT_DIR}/src/adapter/machine_dac.c
     ${PROJECT_DIR}/src/adapter/machine_i2c.c
     ${PROJECT_DIR}/src/adapter/machine_pwm.c
@@ -128,6 +129,9 @@ if(IDF_TARGET STREQUAL "esp32")
 elseif(IDF_TARGET STREQUAL "esp32s2")
     list(APPEND IDF_COMPONENTS esp32s2)
     list(APPEND IDF_COMPONENTS tinyusb)
+elseif(IDF_TARGET STREQUAL "esp32s3")
+    list(APPEND IDF_COMPONENTS esp32s3)
+    list(APPEND IDF_COMPONENTS tinyusb)
 endif()
 
 # Register the main IDF component.
@@ -174,8 +178,9 @@ target_compile_options(${MICROPY_TARGET} PUBLIC
 )
 
 # Add additional extmod and usermod components.
-target_link_libraries(${MICROPY_TARGET} micropy_extmod_btree)
-target_link_libraries(${MICROPY_TARGET} usermod)
+target_link_libraries(${MICROPY_TARGET} micropy_extmod_btree m gcc)
+target_link_libraries(${MICROPY_TARGET} usermod m gcc)
+target_link_libraries(${COMPONENT_LIB} "-u __ieee754_sqrtf")
 
 
 # Collect all of the include directories and compile definitions for the IDF components.

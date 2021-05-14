@@ -23,7 +23,6 @@ set(SDKCONFIG ${CMAKE_BINARY_DIR}/sdkconfig)
 
 # Include board config; this is expected to set SDKCONFIG_DEFAULTS (among other options).
 include(${MICROPY_BOARD_DIR}/mpconfigboard.cmake)
-
 # Concatenate all sdkconfig files into a combined one for the IDF to use.
 file(WRITE ${CMAKE_BINARY_DIR}/sdkconfig.combined.in "")
 foreach(SDKCONFIG_DEFAULT ${SDKCONFIG_DEFAULTS})
@@ -32,7 +31,6 @@ foreach(SDKCONFIG_DEFAULT ${SDKCONFIG_DEFAULTS})
 endforeach()
 configure_file(${CMAKE_BINARY_DIR}/sdkconfig.combined.in ${CMAKE_BINARY_DIR}/sdkconfig.combined COPYONLY)
 set(SDKCONFIG_DEFAULTS ${CMAKE_BINARY_DIR}/sdkconfig.combined)
-
 # Include main IDF cmake file and define the project.
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(micropython)
