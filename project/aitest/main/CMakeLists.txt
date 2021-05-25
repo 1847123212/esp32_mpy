@@ -38,7 +38,7 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/src/main.c
     ${PROJECT_DIR}/src/ef_sqrt.c
     ${PROJECT_DIR}/src/adapter/uart.c
-    #${PROJECT_DIR}/src/adapter/usb.c
+    ${PROJECT_DIR}/src/adapter/usb.c
     ${PROJECT_DIR}/src/adapter/gccollect.c
     ${PROJECT_DIR}/src/adapter/mphalport.c
     ${PROJECT_DIR}/src/adapter/fatfs_port.c
@@ -66,7 +66,7 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/src/adapter/esp32_ulp.c
     ${PROJECT_DIR}/src/adapter/modesp32.c
     ${PROJECT_DIR}/src/adapter/espneopixel.c
-    #${PROJECT_DIR}/src/adapter/machine_hw_spi.c
+    ${PROJECT_DIR}/src/adapter/machine_hw_spi.c
     ${PROJECT_DIR}/src/adapter/machine_wdt.c
     ${PROJECT_DIR}/src/adapter/mpthreadport.c
     ${PROJECT_DIR}/src/adapter/machine_rtc.c
@@ -131,7 +131,7 @@ elseif(IDF_TARGET STREQUAL "esp32s2")
     list(APPEND IDF_COMPONENTS tinyusb)
 elseif(IDF_TARGET STREQUAL "esp32s3")
     list(APPEND IDF_COMPONENTS esp32s3)
-    #list(APPEND IDF_COMPONENTS tinyusb)
+    list(APPEND IDF_COMPONENTS tinyusb)
 endif()
 
 # Register the main IDF component.

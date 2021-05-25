@@ -36,8 +36,13 @@
    进入目录 `esp32_mpy/submodule/micropython`，输入命令
    
    `make -C mpy-cross`
+## 4. ESP-IDF 和 micropython 对应的版本 ##
+    
+    `ESP-IDF: commit-id c13afea635adec735435961270d0894ff46eef85  2021.05.18`
 
-## 4. 编译工程 ##
+    `micropython: commit-id 3b950ed2959c603ff30dd6052c157e7981c4d2d6 2021.05.22`
+
+## 5. 编译工程 ##
 
    进入目录 `esp32_mpy/submodule/esp-idf`，输入命令 `source ./export.sh` , 这个操作是初始化全部的环境变量
 
@@ -48,7 +53,7 @@
 
    - 执行 `make` 编译代码(首次编译，需要先执行make)
    
-   如果编译没有出错，您在目录 `project/aitest/` 中应该可以看到新创建的 `build`文件夹。在这个文件夹中，有编译生成的 `application.bin` 等文件。
+   如果编译没有出错，您在目录 `project/aitest/` 中应该可以看到新创建的 `build-GENERIC_S3`文件夹。在这个文件夹中，有编译生成的 `application.bin` 等文件。
    
    其它可能经常会用到指令包括
 
@@ -56,11 +61,11 @@
    
    - 执行 `make deploy` 编译并烧录固件
 
-## 5. 串口工具 ##
+## 6. 串口工具 ##
    因为本工程固件支持repl模式，所以可以使用 pytty等串口工具来进行repl调试。
    [点击下载putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
 
-## 6. 连接你的设备 ##
+## 7. 连接你的设备 ##
 
 
 
