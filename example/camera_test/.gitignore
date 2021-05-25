@@ -1,0 +1,4 @@
+# project build directory
+######################
+build/
+.DS_Store
