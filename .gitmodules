@@ -1,8 +1,8 @@
 [submodule "submodule/micropython"]
 	path = submodule/micropython
-	url = https://github.com/YanMinge/micropython
+	url = ../../micropython/micropython
         branch = master
 [submodule "submodule/esp-idf"]
 	path = submodule/esp-idf
-	url = https://github.com/espressif/esp-idf
-        branch = release/v4.3
+	url = ../../espressif/esp-idf
+        branch = master

@@ -166,6 +166,8 @@ void mp_thread_finish(void) {
     mp_thread_mutex_unlock(&thread_mutex);
 }
 
+// This is called from the FreeRTOS idle task and is not within Python context,
+// so MP_STATE_THREAD is not valid and it does not have the GIL.
 void vPortCleanUpTCB(void *tcb) {
     if (thread == NULL) {
         // threading not yet initialised

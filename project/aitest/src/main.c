@@ -106,6 +106,29 @@ void mp_task(void *pvParameter) {
             mp_task_heap = malloc(mp_task_heap_size);
             break;
     }
+    #elif CONFIG_ESP32S2_SPIRAM_SUPPORT
+    // Try to use the entire external SPIRAM directly for the heap
+    size_t mp_task_heap_size;
+    size_t esp_spiram_size = esp_spiram_get_size();
+    void *mp_task_heap = (void *)0x3ff80000 - esp_spiram_size;
+    if (esp_spiram_size > 0) {
+        mp_task_heap_size = esp_spiram_size;
+    } else {
+        // No SPIRAM, fallback to normal allocation
+        mp_task_heap_size = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
+        mp_task_heap = malloc(mp_task_heap_size);
+    }
+    #elif CONFIG_ESP32S3_SPIRAM_SUPPORT
+    size_t mp_task_heap_size;
+    size_t esp_spiram_size = esp_spiram_get_size();
+    void *mp_task_heap = (void *)0x3E000000 - esp_spiram_size;
+    if (esp_spiram_size > 0) {
+        mp_task_heap_size = esp_spiram_size;
+    } else {
+        // No SPIRAM, fallback to normal allocation
+        mp_task_heap_size = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
+        mp_task_heap = malloc(mp_task_heap_size - 100000);
+    }
     #else
     // Allocate the uPy heap using malloc and get the largest available region
     size_t mp_task_heap_size = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);

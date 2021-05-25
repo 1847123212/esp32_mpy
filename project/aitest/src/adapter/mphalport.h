@@ -68,13 +68,6 @@ void mp_hal_wake_main_task_from_isr(void);
 
 // C-level pin HAL
 #include "py/obj.h"
-#if CONFIG_IDF_TARGET_ESP32
-#include "esp32/rom/gpio.h"
-#elif CONFIG_IDF_TARGET_ESP32S2
-#include "esp32s2/rom/gpio.h"
-#elif CONFIG_IDF_TARGET_ESP32S3
-#include "esp32s3/rom/gpio.h"
-#endif
 #include "driver/gpio.h"
 #define MP_HAL_PIN_FMT "%u"
 #define mp_hal_pin_obj_t gpio_num_t
