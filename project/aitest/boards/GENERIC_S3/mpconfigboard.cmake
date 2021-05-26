@@ -5,6 +5,7 @@ set(SDKCONFIG_DEFAULTS
     boards/sdkconfig.240mhz_s3
     boards/sdkconfig.spiram_s3
     boards/sdkconfig.usb
+    boards/sdkconfig.freertos
 )
 
 if(NOT MICROPY_FROZEN_MANIFEST)

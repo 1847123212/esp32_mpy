@@ -9,7 +9,16 @@ set(PROJECT ${BOARD}-${PROJECT})
 set(TOP "../../submodule/esp-idf/components/tinyusb/tinyusb")
 get_filename_component(TOP "${TOP}" REALPATH)
 
+set(IDF_TARGET esp32s3)
 set(FAMILY "esp32s3")
+
+set(SDKCONFIG_DEFAULTS
+    sdkconfig.base_s3
+    sdkconfig.240mhz_s3
+    sdkconfig.spiram_s3
+    sdkconfig.freertos
+    sdkconfig.usb
+)
 
 # Check for -DFAMILY=
 if(FAMILY MATCHES "^esp32s[2-3]")
