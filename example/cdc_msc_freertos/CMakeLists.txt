@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 # use BOARD-Directory name for project id
 set(BOARD "espressif_addax_1")
 get_filename_component(PROJECT ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-set(PROJECT ${BOARD}-${PROJECT})
+set(PROJECT ${PROJECT})
 
 # TOP is absolute path to root directory of TinyUSB git repo
 set(TOP "../../submodule/esp-idf/components/tinyusb/tinyusb")
