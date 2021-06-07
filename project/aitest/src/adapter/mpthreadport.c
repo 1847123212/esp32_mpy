@@ -184,8 +184,7 @@ void vPortCleanUpTCB(void *tcb) {
                 // move the start pointer
                 thread = th->next;
             }
-            // explicitly release all its memory
-            m_del(thread_t, th, 1);
+            // The "th" memory will eventually be reclaimed by the GC.
             break;
         }
     }
@@ -193,7 +192,10 @@ void vPortCleanUpTCB(void *tcb) {
 }
 
 void mp_thread_mutex_init(mp_thread_mutex_t *mutex) {
-    mutex->handle = xSemaphoreCreateMutexStatic(&mutex->buffer);
+    // Need a binary semaphore so a lock can be acquired on one Python thread
+    // and then released on another.
+    mutex->handle = xSemaphoreCreateBinaryStatic(&mutex->buffer);
+    xSemaphoreGive(mutex->handle);
 }
 
 int mp_thread_mutex_lock(mp_thread_mutex_t *mutex, int wait) {

@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/home/myan/develop/esp32_mpy/example/msc_test/build/CMakeFiles/bootloader
+/home/myan/develop/esp32_mpy/example/msc_test/build/CMakeFiles/bootloader.rule
+/home/myan/develop/esp32_mpy/example/msc_test/build/CMakeFiles/bootloader-complete.rule
+/home/myan/develop/esp32_mpy/example/msc_test/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/home/myan/develop/esp32_mpy/example/msc_test/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/home/myan/develop/esp32_mpy/example/msc_test/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/home/myan/develop/esp32_mpy/example/msc_test/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
+/home/myan/develop/esp32_mpy/example/msc_test/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/home/myan/develop/esp32_mpy/example/msc_test/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/home/myan/develop/esp32_mpy/example/msc_test/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule

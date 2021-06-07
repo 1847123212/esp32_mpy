@@ -1,0 +1,38 @@
+menu "USB MSC Device Demo"
+
+    choice STORAGE_MEDIA
+        prompt "Storage Media"
+        default USE_INTERNAL_FLASH
+
+        config USE_INTERNAL_FLASH
+            bool "Use Internal Flash"
+
+        config USE_EXTERNAL_SDCARD
+            bool "Use External SDCard" 
+    endchoice
+
+    config DISK_BLOCK_SIZE
+        int "Disk Block Size"
+        default 512
+
+    config SDCARD_MOSI_PIN
+        int "sdcard mosi pin"
+        range 1 43
+        default 4
+
+    config SDCARD_MISO_PIN
+        int "sdcard miso pin"
+        range 1 43
+        default 5
+
+    config SDCARD_SCLK_PIN
+        int "sdcard sclk pin"
+        range 1 43
+        default 6
+
+    config SDCARD_CS_PIN
+        int "sdcard cs pin"
+        range 1 43
+        default 7
+
+endmenu

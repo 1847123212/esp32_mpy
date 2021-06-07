@@ -1,0 +1,21 @@
+{
+    "project_name":       "bootloader",
+    "project_path":       "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/bootloader/subproject",
+    "build_dir":          "/home/myan/develop/esp32_mpy/example/msc_test/build/bootloader",
+    "config_file":        "/home/myan/develop/esp32_mpy/example/msc_test/sdkconfig",
+    "config_defaults":    "",
+    "app_elf":            "bootloader.elf",
+    "app_bin":            "bootloader.bin",
+    "git_revision":       "v4.4-dev-1594-g1d7068e4b",
+    "target":             "esp32s3",
+    "rev":                "",
+    "phy_data_partition": "",
+    "monitor_baud" :      "115200",
+    "monitor_toolprefix": "xtensa-esp32s3-elf-",
+    "config_environment" : {
+        "COMPONENT_KCONFIGS" : "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/efuse/Kconfig;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esp32s3/Kconfig;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esp_common/Kconfig;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esp_hw_support/Kconfig;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esp_system/Kconfig;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/freertos/Kconfig;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/log/Kconfig;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/newlib/Kconfig;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/spi_flash/Kconfig",
+        "COMPONENT_KCONFIGS_PROJBUILD" : "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/bootloader/Kconfig.projbuild;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esp_rom/Kconfig.projbuild;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esptool_py/Kconfig.projbuild;/home/myan/develop/esp32_mpy/submodule/esp-idf/components/partition_table/Kconfig.projbuild"
+    },
+    "build_components" : [ "bootloader", "bootloader_support", "efuse", "esp32s3", "esp_common", "esp_hw_support", "esp_rom", "esp_system", "esptool_py", "freertos", "hal", "log", "main", "micro-ecc", "newlib", "partition_table", "soc", "spi_flash", "xtensa", "" ],
+    "build_component_paths" : [ "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/bootloader", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/bootloader_support", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/efuse", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esp32s3", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esp_common", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esp_hw_support", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esp_rom", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esp_system", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/esptool_py", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/freertos", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/hal", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/log", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/bootloader/subproject/main", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/bootloader/subproject/components/micro-ecc", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/newlib", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/partition_table", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/soc", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/spi_flash", "/home/myan/develop/esp32_mpy/submodule/esp-idf/components/xtensa", "" ]
+}

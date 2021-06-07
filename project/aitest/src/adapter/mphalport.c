@@ -32,6 +32,7 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+
 #if CONFIG_IDF_TARGET_ESP32
 #include "esp32/rom/uart.h"
 #elif CONFIG_IDF_TARGET_ESP32S2
@@ -39,6 +40,7 @@
 #elif CONFIG_IDF_TARGET_ESP32S3
 #include "esp32s3/rom/uart.h"
 #endif
+
 #include "py/obj.h"
 #include "py/objstr.h"
 #include "py/stream.h"
