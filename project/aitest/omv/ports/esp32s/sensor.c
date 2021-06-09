@@ -695,7 +695,7 @@ int sensor_snapshot(omv_sensor_t *sensor, image_t *image, uint32_t flags)
     ESP_LOGI(TAG, "Taking picture...");
     camera_fb_t *pic = esp_camera_fb_get();
     memcpy(buffer->data, pic->buf, pic->len);
-    
+    esp_camera_fb_return(pic);
     // use pic->buf to access the image
     ESP_LOGI(TAG, "Picture taken! Its size was: %zu bytes", pic->len);
 

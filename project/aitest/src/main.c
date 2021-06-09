@@ -61,6 +61,7 @@
 #include "modmachine.h"
 #include "modnetwork.h"
 #include "mpthreadport.h"
+#include "sensor.h"
 
 #if MICROPY_BLUETOOTH_NIMBLE
 #include "extmod/modbluetooth.h"
@@ -69,7 +70,6 @@
 // MicroPython runs as a task under FreeRTOS
 #define MP_TASK_PRIORITY        (ESP_TASK_PRIO_MIN + 1)
 #define MP_TASK_STACK_SIZE      (16 * 1024)
-#define OPENMV_RAM_RESERVE_SIZE (1000000)
 
 int vprintf_null(const char *format, va_list ap) {
     // do nothing: this is used as a log target during raw repl mode
@@ -87,7 +87,9 @@ void mp_task(void *pvParameter) {
     uart_init();
     #endif
     machine_init();
-
+    fb_alloc_init0();
+    framebuffer_init0();
+    sensor_init();
     // TODO: CONFIG_SPIRAM_SUPPORT is for 3.3 compatibility, remove after move to 4.0.
     #if CONFIG_ESP32_SPIRAM_SUPPORT || CONFIG_SPIRAM_SUPPORT
     // Try to use the entire external SPIRAM directly for the heap
@@ -120,15 +122,23 @@ void mp_task(void *pvParameter) {
         mp_task_heap = malloc(mp_task_heap_size);
     }
     #elif CONFIG_ESP32S3_SPIRAM_SUPPORT
-    size_t mp_task_heap_size;
+    size_t mp_task_heap_size = 2 * 1024 * 1024;
     size_t esp_spiram_size = esp_spiram_get_size();
-    void *mp_task_heap = (void *)SOC_EXTRAM_DATA_HIGH - esp_spiram_size;
+    void *mp_task_heap = NULL;
+    ESP_LOGI("mp_task", "esp_spiram_size[%d]", esp_spiram_size);
+    // void *mp_task_heap = (void *)SOC_EXTRAM_DATA_HIGH - esp_spiram_size;
     if (esp_spiram_size > 0) {
-        mp_task_heap_size = esp_spiram_size;
+        mp_task_heap = heap_caps_malloc(mp_task_heap_size, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+        ESP_LOGI("mp_task=", "mp_task_heap(%p), mp_task_heap_size[%d]\n",mp_task_heap, mp_task_heap_size);
+        if(mp_task_heap == NULL)
+        {
+            ESP_LOGE("mp_task", "malloc heap for mp task failed, heap size if %d\n", mp_task_heap_size);
+            vTaskDelay(2000 / portTICK_PERIOD_MS);
+        }
     } else {
         // No SPIRAM, fallback to normal allocation
         mp_task_heap_size = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
-        mp_task_heap = malloc(mp_task_heap_size - OPENMV_RAM_RESERVE_SIZE);
+        mp_task_heap = malloc(mp_task_heap_size);
     }
     #else
     // Allocate the uPy heap using malloc and get the largest available region

@@ -70,9 +70,21 @@ void fb_encode_for_ide(uint8_t *ptr, image_t *img)
 }
 
 void framebuffer_init0()
-{   
-    jpeg_framebuffer = (jpegbuffer_t *) JPEG_BUF_BASE_ADDR;
-    framebuffer = (framebuffer_t *) FB_BASE_ADDR;
+{
+    jpeg_framebuffer = heap_caps_malloc(OMV_JPEG_BUF_SIZE, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    printf("jpeg_framebuffer(%p), OMV_JPEG_BUF_SIZE[%d]\n",jpeg_framebuffer, OMV_JPEG_BUF_SIZE);
+    if(jpeg_framebuffer == NULL)
+    {
+        printf("malloc heap for mp task failed, heap size if %d\n", OMV_JPEG_BUF_SIZE);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    }
+    framebuffer = heap_caps_malloc(OMV_FB_SIZE, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    printf("framebuffer(%p), OMV_FB_SIZE[%d]\n",framebuffer, OMV_FB_SIZE);
+    if(framebuffer == NULL)
+    {
+        printf("malloc heap for mp task failed, heap size if %d\n", OMV_FB_SIZE);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    }
     
     // Save fb_enabled flag state
     int fb_enabled = JPEG_FB()->enabled;
