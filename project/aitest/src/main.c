@@ -61,7 +61,10 @@
 #include "modmachine.h"
 #include "modnetwork.h"
 #include "mpthreadport.h"
-#include "sensor.h"
+
+#include "omv_sensor.h"
+#include "fb_alloc.h"
+#include "framebuffer.h"
 
 #if MICROPY_BLUETOOTH_NIMBLE
 #include "extmod/modbluetooth.h"

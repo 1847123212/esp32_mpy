@@ -77,6 +77,8 @@
 #define IM_DEG2RAD(x)   (((x)*M_PI)/180)
 #define IM_RAD2DEG(x)   (((x)*180)/M_PI)
 
+int32_t __SSAT(int32_t val, uint32_t sat);
+uint32_t __USAT(int32_t val, uint32_t sat);
 /////////////////
 // Point Stuff //
 /////////////////

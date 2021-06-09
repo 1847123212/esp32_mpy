@@ -28,5 +28,7 @@
 
 void usb_init(void);
 void usb_tx_strn(const char *str, size_t len);
+uint32_t usb_cdc_buf_len();
+uint32_t usb_cdc_get_buf(uint8_t *buf, uint32_t len);
 
 #endif // MICROPY_INCLUDED_ESP32_USB_H

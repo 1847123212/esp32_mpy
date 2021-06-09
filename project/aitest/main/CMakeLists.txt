@@ -185,7 +185,6 @@ target_compile_options(${MICROPY_TARGET} PUBLIC
     -Wno-deprecated-declarations
     -Wno-missing-field-initializers
     -Wno-error=type-limits
-    -Wno-error=implicit-function-declaration
     -Wno-error=maybe-uninitialized 
     -Wno-error=unused-but-set-parameter
     -Wno-error=uninitialized

@@ -18,9 +18,10 @@
 #include "py/parse.h"
 #include "py/compile.h"
 #include "py/runtime.h"
-#include "pendsv.h"
+// #include "pendsv.h"
 
 #include "imlib.h"
+#include "usb.h"
 #if MICROPY_PY_SENSOR
 #include "cambus.h"
 #include "sensor.h"
@@ -71,11 +72,11 @@ void usbdbg_set_script_running(bool running)
 inline void usbdbg_set_irq_enabled(bool enabled)
 {
     if (enabled) {
-        NVIC_EnableIRQ(OMV_USB_IRQN);
+        // NVIC_EnableIRQ(OMV_USB_IRQN);
     } else {
-        NVIC_DisableIRQ(OMV_USB_IRQN);
+        // NVIC_DisableIRQ(OMV_USB_IRQN);
     }
-    __DSB(); __ISB();
+    // __DSB(); __ISB();
 }
 
 void usbdbg_data_in(void *buffer, int length)
@@ -211,12 +212,13 @@ void usbdbg_data_out(void *buffer, int length)
                     mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
 
                     // Remove the BASEPRI masking (if any)
-                    __set_BASEPRI(0);
+                    // __set_BASEPRI(0);
 
                     // Interrupt running REPL
                     // Note: setting pendsv explicitly here because the VM is probably
                     // waiting in REPL and the soft interrupt flag will not be checked.
-                    pendsv_nlr_jump(mp_const_ide_interrupt);
+                    // pendsv_nlr_jump(mp_const_ide_interrupt);
+                    nlr_raise(mp_const_ide_interrupt);
                 }
             }
             break;
@@ -333,9 +335,10 @@ void usbdbg_control(void *buffer, uint8_t request, uint32_t length)
                 mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
 
                 // Remove the BASEPRI masking (if any)
-                __set_BASEPRI(0);
+                // __set_BASEPRI(0);
 
-                pendsv_nlr_jump(mp_const_ide_interrupt);
+                // pendsv_nlr_jump(mp_const_ide_interrupt);
+                nlr_raise(mp_const_ide_interrupt);
             }
             cmd = USBDBG_NONE;
             break;
@@ -363,7 +366,8 @@ void usbdbg_control(void *buffer, uint8_t request, uint32_t length)
             break;
 
         case USBDBG_SYS_RESET:
-            NVIC_SystemReset();
+            //NVIC_SystemReset();
+            esp_restart();
             break;
 
         case USBDBG_SYS_RESET_TO_BL:{
@@ -372,7 +376,8 @@ void usbdbg_control(void *buffer, uint8_t request, uint32_t length)
             RTCHandle.Instance = RTC;
             HAL_RTCEx_BKUPWrite(&RTCHandle, RTC_BKP_DR0, 0xDF59);
             #endif
-            NVIC_SystemReset();
+            //NVIC_SystemReset();
+            esp_restart();
             break;
         }
         

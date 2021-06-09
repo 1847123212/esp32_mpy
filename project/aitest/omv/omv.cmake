@@ -12,6 +12,7 @@ set(OMV_SRCS
   ${PROJECT_DIR}/omv/common/ringbuf.c
   ${PROJECT_DIR}/omv/common/trace.c
   ${PROJECT_DIR}/omv/common/mutex.c
+  ${PROJECT_DIR}/omv/common/usbdbg.c
   
   ${PROJECT_DIR}/omv/imlib/agast.c
   ${PROJECT_DIR}/omv/imlib/apriltag.c
