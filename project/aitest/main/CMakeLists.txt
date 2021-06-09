@@ -1,8 +1,11 @@
 # Set location of base MicroPython directory.
 get_filename_component(MICROPY_DIR ${PROJECT_DIR}/../../submodule/micropython ABSOLUTE)
 
+option(CONFIG_OPENMV_SUPPORT "option for openmv" ON)
+
 # Include core source components.
 include(${MICROPY_DIR}/py/py.cmake)
+include(${PROJECT_DIR}/omv/omv.cmake)
 
 if(NOT CMAKE_BUILD_EARLY_EXPANSION)
     include(${MICROPY_DIR}/py/usermod.cmake)
@@ -79,6 +82,7 @@ set(MICROPY_SOURCE_QSTR
     ${MICROPY_SOURCE_USERMOD}
     ${MICROPY_SOURCE_LIB}
     ${MICROPY_SOURCE_PORT}
+    ${OMV_MOD_SRCS}
 )
 
 set(IDF_COMPONENTS
@@ -132,6 +136,7 @@ elseif(IDF_TARGET STREQUAL "esp32s2")
 elseif(IDF_TARGET STREQUAL "esp32s3")
     list(APPEND IDF_COMPONENTS esp32s3)
     list(APPEND IDF_COMPONENTS tinyusb)
+    list(APPEND IDF_COMPONENTS esp32-camera)
 endif()
 
 # Register the main IDF component.
@@ -142,13 +147,16 @@ idf_component_register(
         ${MICROPY_SOURCE_LIB}
         ${MICROPY_SOURCE_DRIVERS}
         ${MICROPY_SOURCE_PORT}
+        ${OMV_SRCS}
     INCLUDE_DIRS
         ${MICROPY_INC_CORE}
         ${MICROPY_INC_USERMOD}
         ${MICROPY_PORT_DIR}
         ${MICROPY_PORT_DIR}/src/adapter/
+        ${OMV_INCLUDEDIRS}
         ${MICROPY_BOARD_DIR}
         ${CMAKE_BINARY_DIR}
+        ${MICROPY_DIR}/py  
     REQUIRES
         ${IDF_COMPONENTS}
 )
@@ -161,6 +169,7 @@ set(MICROPY_CROSS_FLAGS -march=xtensawin)
 
 # Set compile options for this port.
 target_compile_definitions(${MICROPY_TARGET} PUBLIC
+    CONFIG_OPENMV_SUPPORT=1
     ${MICROPY_DEF_CORE}
     MICROPY_ESP_IDF_4=1
     MICROPY_VFS_FAT=1
@@ -175,6 +184,12 @@ target_compile_options(${MICROPY_TARGET} PUBLIC
     -Wno-clobbered
     -Wno-deprecated-declarations
     -Wno-missing-field-initializers
+    -Wno-error=type-limits
+    -Wno-error=implicit-function-declaration
+    -Wno-error=maybe-uninitialized 
+    -Wno-error=unused-but-set-parameter
+    -Wno-error=uninitialized
+    -Wno-error=format=
 )
 
 # Add additional extmod and usermod components.

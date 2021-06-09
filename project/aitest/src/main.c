@@ -69,6 +69,7 @@
 // MicroPython runs as a task under FreeRTOS
 #define MP_TASK_PRIORITY        (ESP_TASK_PRIO_MIN + 1)
 #define MP_TASK_STACK_SIZE      (16 * 1024)
+#define OPENMV_RAM_RESERVE_SIZE (1000000)
 
 int vprintf_null(const char *format, va_list ap) {
     // do nothing: this is used as a log target during raw repl mode
@@ -91,7 +92,7 @@ void mp_task(void *pvParameter) {
     #if CONFIG_ESP32_SPIRAM_SUPPORT || CONFIG_SPIRAM_SUPPORT
     // Try to use the entire external SPIRAM directly for the heap
     size_t mp_task_heap_size;
-    void *mp_task_heap = (void *)0x3f800000;
+    void *mp_task_heap = (void *)SOC_EXTRAM_DATA_LOW;
     switch (esp_spiram_get_chip_size()) {
         case ESP_SPIRAM_SIZE_16MBITS:
             mp_task_heap_size = 2 * 1024 * 1024;
@@ -110,7 +111,7 @@ void mp_task(void *pvParameter) {
     // Try to use the entire external SPIRAM directly for the heap
     size_t mp_task_heap_size;
     size_t esp_spiram_size = esp_spiram_get_size();
-    void *mp_task_heap = (void *)0x3ff80000 - esp_spiram_size;
+    void *mp_task_heap = (void *)SOC_EXTRAM_DATA_HIGH - esp_spiram_size;
     if (esp_spiram_size > 0) {
         mp_task_heap_size = esp_spiram_size;
     } else {
@@ -121,13 +122,13 @@ void mp_task(void *pvParameter) {
     #elif CONFIG_ESP32S3_SPIRAM_SUPPORT
     size_t mp_task_heap_size;
     size_t esp_spiram_size = esp_spiram_get_size();
-    void *mp_task_heap = (void *)0x3E000000 - esp_spiram_size;
+    void *mp_task_heap = (void *)SOC_EXTRAM_DATA_HIGH - esp_spiram_size;
     if (esp_spiram_size > 0) {
         mp_task_heap_size = esp_spiram_size;
     } else {
         // No SPIRAM, fallback to normal allocation
         mp_task_heap_size = heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
-        mp_task_heap = malloc(mp_task_heap_size - 100000);
+        mp_task_heap = malloc(mp_task_heap_size - OPENMV_RAM_RESERVE_SIZE);
     }
     #else
     // Allocate the uPy heap using malloc and get the largest available region
