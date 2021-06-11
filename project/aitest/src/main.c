@@ -57,7 +57,7 @@
 #include "lib/mp-readline/readline.h"
 #include "lib/utils/pyexec.h"
 #include "uart.h"
-#include "usb.h"
+#include "usb_cdc.h"
 #include "modmachine.h"
 #include "modnetwork.h"
 #include "mpthreadport.h"
@@ -65,6 +65,7 @@
 #include "omv_sensor.h"
 #include "fb_alloc.h"
 #include "framebuffer.h"
+#include "usbdbg.h"
 
 #if MICROPY_BLUETOOTH_NIMBLE
 #include "extmod/modbluetooth.h"
@@ -85,7 +86,8 @@ void mp_task(void *pvParameter) {
     mp_thread_init(pxTaskGetStackStart(NULL), MP_TASK_STACK_SIZE / sizeof(uintptr_t));
     #endif
     #if CONFIG_USB_ENABLED
-    usb_init();
+    //usb_init();
+    usb_cdc_init();
     #else
     uart_init();
     #endif
@@ -167,28 +169,72 @@ soft_reset:
     // run boot-up scripts
     pyexec_frozen_module("_boot.py");
     pyexec_file_if_exists("boot.py");
-    if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
-        int ret = pyexec_file_if_exists("main.py");
-        if (ret & PYEXEC_FORCED_EXIT) {
-            goto soft_reset_exit;
+    // int ret = pyexec_file_if_exists("main.py");
+    // if (ret & PYEXEC_FORCED_EXIT) {
+    //         goto soft_reset_exit;
+    // }
+
+    usbdbg_init();
+        // If there's no script ready, just re-exec REPL
+    while (!usbdbg_script_ready()) {
+        nlr_buf_t nlr;
+
+        if (nlr_push(&nlr) == 0) {
+            // enable IDE interrupt
+            usbdbg_set_irq_enabled(true);
+
+            //__WFI();
+            // run REPL
+            if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
+                if (pyexec_raw_repl() != 0) {
+                    break;
+                }
+            } else {
+                if (pyexec_friendly_repl() != 0) {
+                    break;
+                }
+            }
+
+            nlr_pop();
         }
     }
 
-    for (;;) {
-        if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
-            vprintf_like_t vprintf_log = esp_log_set_vprintf(vprintf_null);
-            if (pyexec_raw_repl() != 0) {
-                break;
-            }
-            esp_log_set_vprintf(vprintf_log);
-        } else {
-            if (pyexec_friendly_repl() != 0) {
-                break;
-            }
-        }
-    }
+    // if (usbdbg_script_ready()) {
+    //     nlr_buf_t nlr;
+    //     if (nlr_push(&nlr) == 0) {
+    //         // Enable IDE interrupt
+    //         usbdbg_set_irq_enabled(true);
 
-soft_reset_exit:
+    //         // Execute the script.
+    //         pyexec_str(usbdbg_get_script());
+    //         nlr_pop();
+    //     } else {
+    //         mp_obj_print_exception(&mp_plat_print, (mp_obj_t)nlr.ret_val);
+    //     }
+    // }
+
+    // if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
+    //     int ret = pyexec_file_if_exists("main.py");
+    //     if (ret & PYEXEC_FORCED_EXIT) {
+    //         goto soft_reset_exit;
+    //     }
+    // }
+
+    // for (;;) {
+    //     if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
+    //         vprintf_like_t vprintf_log = esp_log_set_vprintf(vprintf_null);
+    //         if (pyexec_raw_repl() != 0) {
+    //             break;
+    //         }
+    //         esp_log_set_vprintf(vprintf_log);
+    //     } else {
+    //         if (pyexec_friendly_repl() != 0) {
+    //             break;
+    //         }
+    //     }
+    // }
+
+// soft_reset_exit:
 
     #if MICROPY_BLUETOOTH_NIMBLE
     mp_bluetooth_deinit();

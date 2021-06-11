@@ -71,9 +71,9 @@ set(OMV_SRCS
 set(OMV_MOD_SRCS
   ${PROJECT_DIR}/omv/modules/py_clock.c
   ${PROJECT_DIR}/omv/modules/py_gif.c  
-  ${PROJECT_DIR}/omv/modules/py_helper.c                 
+  ${PROJECT_DIR}/omv/modules/py_helper.c
   ${PROJECT_DIR}/omv/modules/py_image.c
-  ${PROJECT_DIR}/omv/modules/py_imageio.c                
+  ${PROJECT_DIR}/omv/modules/py_imageio.c
   ${PROJECT_DIR}/omv/modules/py_mjpeg.c
   ${PROJECT_DIR}/omv/modules/py_omv.c  
   ${PROJECT_DIR}/omv/modules/py_sensor.c
@@ -82,7 +82,7 @@ set(OMV_MOD_SRCS
 list(APPEND OMV_SRCS "${OMV_MOD_SRCS}")
 
 set(OMV_INCLUDEDIRS
-  ${PROJECT_DIR}/omv/
+  ${PROJECT_DIR}/omv
   ${PROJECT_DIR}/omv/alloc
   ${PROJECT_DIR}/omv/common
   ${PROJECT_DIR}/omv/imlib

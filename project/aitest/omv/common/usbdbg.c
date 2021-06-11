@@ -31,6 +31,7 @@
 #include "usbdbg.h"
 #include "omv_boardconfig.h"
 #include "py_image.h"
+#include "esp_log.h"
 
 static int xfer_bytes;
 static int xfer_length;
@@ -81,6 +82,7 @@ inline void usbdbg_set_irq_enabled(bool enabled)
 
 void usbdbg_data_in(void *buffer, int length)
 {
+    ESP_LOGW("usbdbg", "usbdbg_data_in(%d)\r\n", cmd);
     switch (cmd) {
         case USBDBG_FW_VERSION: {
             uint32_t *ver_buf = buffer;
@@ -178,6 +180,8 @@ void usbdbg_data_in(void *buffer, int length)
 
 void usbdbg_data_out(void *buffer, int length)
 {
+    ESP_LOGW("usbdbg", "usbdbg_data_out(%d)\r\n", cmd);
+    fflush(stdout);
     switch (cmd) {
         case USBDBG_FB_ENABLE: {
             uint32_t enable = *((int32_t*)buffer);
@@ -209,7 +213,7 @@ void usbdbg_data_out(void *buffer, int length)
                     usbdbg_set_irq_enabled(false);
 
                     // Clear interrupt traceback
-                    mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
+                    //mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
 
                     // Remove the BASEPRI masking (if any)
                     // __set_BASEPRI(0);
@@ -218,7 +222,7 @@ void usbdbg_data_out(void *buffer, int length)
                     // Note: setting pendsv explicitly here because the VM is probably
                     // waiting in REPL and the soft interrupt flag will not be checked.
                     // pendsv_nlr_jump(mp_const_ide_interrupt);
-                    nlr_raise(mp_const_ide_interrupt);
+                    //nlr_raise(mp_const_ide_interrupt);
                 }
             }
             break;
@@ -296,6 +300,7 @@ void usbdbg_data_out(void *buffer, int length)
 void usbdbg_control(void *buffer, uint8_t request, uint32_t length)
 {
     cmd = (enum usbdbg_cmd) request;
+    ESP_LOGW("usbdbg", "usbdbg_control(%d)\r\n", cmd);
     switch (cmd) {
         case USBDBG_FW_VERSION:
             xfer_bytes = 0;

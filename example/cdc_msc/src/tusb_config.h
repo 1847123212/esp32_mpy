@@ -64,13 +64,13 @@
   #error "Incorrect RHPort configuration"
 #endif
 
-// This example doesn't use an RTOS
-#ifndef CFG_TUSB_OS
-#define CFG_TUSB_OS               OPT_OS_NONE
-#endif
+// This examples use FreeRTOS
+#define CFG_TUSB_OS               OPT_OS_FREERTOS
 
-// CFG_TUSB_DEBUG is defined by compiler in DEBUG build
-// #define CFG_TUSB_DEBUG           0
+// can be defined by compiler in DEBUG build
+#ifndef CFG_TUSB_DEBUG
+  #define CFG_TUSB_DEBUG           3
+#endif
 
 /* USB DMA on some MCUs can only access a specific SRAM region with restriction on alignment.
  * Tinyusb use follows macros to declare transferring memory so that they can be put

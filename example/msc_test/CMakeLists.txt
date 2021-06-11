@@ -15,8 +15,8 @@ set(FAMILY "esp32s3")
 set(SDKCONFIG_DEFAULTS
     sdkconfig.base_s3
     sdkconfig.240mhz_s3
-    sdkconfig.freertos
     sdkconfig.spiram_s3
+    sdkconfig.freertos
     sdkconfig.usb
 )
 

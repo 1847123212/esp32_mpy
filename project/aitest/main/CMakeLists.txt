@@ -41,7 +41,7 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/src/main.c
     ${PROJECT_DIR}/src/ef_sqrt.c
     ${PROJECT_DIR}/src/adapter/uart.c
-    ${PROJECT_DIR}/src/adapter/usb.c
+    #${PROJECT_DIR}/src/adapter/usb.c
     ${PROJECT_DIR}/src/adapter/gccollect.c
     ${PROJECT_DIR}/src/adapter/mphalport.c
     ${PROJECT_DIR}/src/adapter/fatfs_port.c
@@ -74,6 +74,7 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/src/adapter/mpthreadport.c
     ${PROJECT_DIR}/src/adapter/machine_rtc.c
     ${PROJECT_DIR}/src/adapter/machine_sdcard.c
+    ${PROJECT_DIR}/src/usb/usb_cdc.c
 )
 
 set(MICROPY_SOURCE_QSTR
@@ -152,6 +153,7 @@ idf_component_register(
         ${MICROPY_INC_CORE}
         ${MICROPY_INC_USERMOD}
         ${MICROPY_PORT_DIR}
+        ${PROJECT_DIR}/src/usb/
         ${MICROPY_PORT_DIR}/src/adapter/
         ${OMV_INCLUDEDIRS}
         ${MICROPY_BOARD_DIR}

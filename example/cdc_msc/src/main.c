@@ -29,11 +29,14 @@
 
 #include "bsp/board.h"
 #include "tusb.h"
+#include "FreeRTOS.h"
+#include "esp_task.h"
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
 //--------------------------------------------------------------------+
-
+#define SUB_TASK_PRIORITY        (ESP_TASK_PRIO_MIN + 1)
+#define SUB_TASK_STACK_SIZE      (16 * 1024)
 /* Blink pattern
  * - 250 ms  : device not mounted
  * - 1000 ms : device mounted
@@ -49,19 +52,18 @@ static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
 
 void led_blinking_task(void);
 void cdc_task(void);
+void sub_task(void *pvParameter);
 
 /*------------- MAIN -------------*/
 int main(void)
 {
   board_init();
   tusb_init();
-
+  printf("tusb_init\n");
+  xTaskCreatePinnedToCore(sub_task, "sub_task", SUB_TASK_STACK_SIZE / sizeof(StackType_t), NULL, SUB_TASK_PRIORITY, NULL, 0);
   while (1)
   {
     tud_task(); // tinyusb device task
-    led_blinking_task();
-
-    cdc_task();
   }
 
   return 0;
@@ -73,6 +75,15 @@ void app_main(void)
   main();
 }
 #endif
+
+void sub_task(void *pvParameter)
+{
+    while(1)
+    {
+      led_blinking_task();
+      cdc_task();
+    }
+}
 
 //--------------------------------------------------------------------+
 // Device callbacks
@@ -113,7 +124,7 @@ void cdc_task(void)
 {
   // connected() check for DTR bit
   // Most but not all terminal client set this when making connection
-  // if ( tud_cdc_connected() )
+  if ( tud_cdc_connected() )
   {
     // connected and there are data available
     if ( tud_cdc_available() )
@@ -122,7 +133,6 @@ void cdc_task(void)
       char buf[64];
       uint32_t count = tud_cdc_read(buf, sizeof(buf));
       (void) count;
-
       // Echo back
       // Note: Skip echo by commenting out write() and write_flush()
       // for throughput test e.g
