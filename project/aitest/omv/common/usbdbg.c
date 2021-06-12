@@ -21,7 +21,8 @@
 // #include "pendsv.h"
 
 #include "imlib.h"
-#include "usb.h"
+#include "usb_cdc.h"
+#include "device/dcd.h"
 #if MICROPY_PY_SENSOR
 #include "cambus.h"
 #include "sensor.h"
@@ -51,9 +52,15 @@ void usbdbg_init()
     cmd = USBDBG_NONE;
     script_ready=false;
     script_running=false;
-    vstr_init(&script_buf, 32);
+    vstr_init(&script_buf, 5 * 1024);
     mp_const_ide_interrupt = mp_obj_new_exception_msg(&mp_type_Exception, "IDE interrupt");
 }
+
+void usbdbg_wait_for_command(uint32_t timeout)
+{
+    for (mp_uint_t ticks = mp_hal_ticks_ms(); ((mp_hal_ticks_ms() - ticks) < timeout) && (cmd != USBDBG_NONE); );
+}
+
 
 bool usbdbg_script_ready()
 {
@@ -73,11 +80,10 @@ void usbdbg_set_script_running(bool running)
 inline void usbdbg_set_irq_enabled(bool enabled)
 {
     if (enabled) {
-        // NVIC_EnableIRQ(OMV_USB_IRQN);
+        dcd_int_enable(0);
     } else {
-        // NVIC_DisableIRQ(OMV_USB_IRQN);
+        dcd_int_disable(0);
     }
-    // __DSB(); __ISB();
 }
 
 void usbdbg_data_in(void *buffer, int length)
@@ -199,11 +205,14 @@ void usbdbg_data_out(void *buffer, int length)
             // check if GC is locked before allocating memory for vstr. If GC was locked
             // at least once before the script is fully uploaded xfer_bytes will be less
             // than the total length (xfer_length) and the script will Not be executed.
-            if (!script_running && !gc_is_locked()) {
+            // if (!script_running && !gc_is_locked()) {
+            if (!script_running) {
                 vstr_add_strn(&script_buf, buffer, length);
                 xfer_bytes += length;
                 if (xfer_bytes == xfer_length) {
                     // Set script ready flag
+                    ESP_LOGW("usbdbg", "xfer_bytes(%d)\r\n", xfer_bytes);
+                    fflush(stdout);
                     script_ready = true;
 
                     // Set script running flag
@@ -213,16 +222,15 @@ void usbdbg_data_out(void *buffer, int length)
                     usbdbg_set_irq_enabled(false);
 
                     // Clear interrupt traceback
-                    //mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
-
-                    // Remove the BASEPRI masking (if any)
-                    // __set_BASEPRI(0);
-
-                    // Interrupt running REPL
-                    // Note: setting pendsv explicitly here because the VM is probably
-                    // waiting in REPL and the soft interrupt flag will not be checked.
-                    // pendsv_nlr_jump(mp_const_ide_interrupt);
-                    //nlr_raise(mp_const_ide_interrupt);
+                    ESP_LOGW("usbdbg", "mp_obj_exception_clear_traceback\r\n");
+                    mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
+                    //MICROPY_WRAP_MP_SCHED_EXCEPTION(mp_const_ide_interrupt);
+                    MP_STATE_VM(mp_pending_exception) = mp_const_ide_interrupt;
+                    #if MICROPY_ENABLE_SCHEDULER
+                        if (MP_STATE_VM(sched_state) == MP_SCHED_IDLE) {
+                            MP_STATE_VM(sched_state) = MP_SCHED_PENDING;
+                    }
+                    #endif
                 }
             }
             break;

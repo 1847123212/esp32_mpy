@@ -1,6 +1,6 @@
 [submodule "submodule/micropython"]
 	path = submodule/micropython
-	url = ../../micropython/micropython
+	url = ../../YanMinge/micropython
         branch = master
 [submodule "submodule/esp-idf"]
 	path = submodule/esp-idf

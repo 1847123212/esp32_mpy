@@ -169,10 +169,10 @@ soft_reset:
     // run boot-up scripts
     pyexec_frozen_module("_boot.py");
     pyexec_file_if_exists("boot.py");
-    // int ret = pyexec_file_if_exists("main.py");
-    // if (ret & PYEXEC_FORCED_EXIT) {
-    //         goto soft_reset_exit;
-    // }
+    int ret = pyexec_file_if_exists("main_test.py");
+    if (ret & PYEXEC_FORCED_EXIT) {
+            goto soft_reset_exit;
+    }
 
     usbdbg_init();
         // If there's no script ready, just re-exec REPL
@@ -199,20 +199,21 @@ soft_reset:
         }
     }
 
-    // if (usbdbg_script_ready()) {
-    //     nlr_buf_t nlr;
-    //     if (nlr_push(&nlr) == 0) {
-    //         // Enable IDE interrupt
-    //         usbdbg_set_irq_enabled(true);
+    if (usbdbg_script_ready()) {
+        nlr_buf_t nlr;
+        if (nlr_push(&nlr) == 0) {
+            // Enable IDE interrupt
+            usbdbg_set_irq_enabled(true);
 
-    //         // Execute the script.
-    //         pyexec_str(usbdbg_get_script());
-    //         nlr_pop();
-    //     } else {
-    //         mp_obj_print_exception(&mp_plat_print, (mp_obj_t)nlr.ret_val);
-    //     }
-    // }
-
+            // Execute the script.
+            pyexec_str(usbdbg_get_script());
+            nlr_pop();
+        } else {
+            mp_obj_print_exception(&mp_plat_print, (mp_obj_t)nlr.ret_val);
+        }
+    }
+    usbdbg_wait_for_command(1000);
+    usbdbg_set_irq_enabled(false);
     // if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
     //     int ret = pyexec_file_if_exists("main.py");
     //     if (ret & PYEXEC_FORCED_EXIT) {
@@ -234,7 +235,7 @@ soft_reset:
     //     }
     // }
 
-// soft_reset_exit:
+soft_reset_exit:
 
     #if MICROPY_BLUETOOTH_NIMBLE
     mp_bluetooth_deinit();

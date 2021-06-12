@@ -48,6 +48,7 @@ enum usbdbg_cmd {
     USBDBG_SENSOR_ID        =0x90
 };
 void usbdbg_init();
+void usbdbg_wait_for_command(uint32_t timeout);
 bool usbdbg_script_ready();
 vstr_t *usbdbg_get_script();
 bool usbdbg_get_irq_enabled();
