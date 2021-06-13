@@ -88,7 +88,7 @@ inline void usbdbg_set_irq_enabled(bool enabled)
 
 void usbdbg_data_in(void *buffer, int length)
 {
-    ESP_LOGW("usbdbg", "usbdbg_data_in(%d)\r\n", cmd);
+    ESP_LOGD("usbdbg", "usbdbg_data_in(%d)", cmd);
     switch (cmd) {
         case USBDBG_FW_VERSION: {
             uint32_t *ver_buf = buffer;
@@ -186,7 +186,7 @@ void usbdbg_data_in(void *buffer, int length)
 
 void usbdbg_data_out(void *buffer, int length)
 {
-    ESP_LOGW("usbdbg", "usbdbg_data_out(%d)\r\n", cmd);
+    ESP_LOGD("usbdbg", "usbdbg_data_out(%d)", cmd);
     fflush(stdout);
     switch (cmd) {
         case USBDBG_FB_ENABLE: {
@@ -205,8 +205,9 @@ void usbdbg_data_out(void *buffer, int length)
             // check if GC is locked before allocating memory for vstr. If GC was locked
             // at least once before the script is fully uploaded xfer_bytes will be less
             // than the total length (xfer_length) and the script will Not be executed.
-            // if (!script_running && !gc_is_locked()) {
-            if (!script_running) {
+            ESP_LOGD("usbdbg", "USBDBG_SCRIPT_EXEC");
+            if (!script_running && !gc_is_locked()) {
+            //if (!script_running) {
                 vstr_add_strn(&script_buf, buffer, length);
                 xfer_bytes += length;
                 if (xfer_bytes == xfer_length) {
@@ -308,7 +309,7 @@ void usbdbg_data_out(void *buffer, int length)
 void usbdbg_control(void *buffer, uint8_t request, uint32_t length)
 {
     cmd = (enum usbdbg_cmd) request;
-    ESP_LOGW("usbdbg", "usbdbg_control(%d)\r\n", cmd);
+    ESP_LOGD("usbdbg", "usbdbg_control(%d)\r\n", cmd);
     switch (cmd) {
         case USBDBG_FW_VERSION:
             xfer_bytes = 0;

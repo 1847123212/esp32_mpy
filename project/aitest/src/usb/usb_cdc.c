@@ -144,7 +144,6 @@ static void cdc_task_debug_mode(void)
                 // Device-to-host data phase
                 int bytes = MIN(xfer_length, DBG_MAX_PACKET);
                 if (bytes <= tud_cdc_write_available()) {
-                    //ESP_LOGW("usb_cdc", "usbdbg_data_in(%d)\r\n", bytes);
                     xfer_length -= bytes;
                     usbdbg_data_in(buf, bytes);
                     tud_cdc_write(buf, bytes);
@@ -154,7 +153,6 @@ static void cdc_task_debug_mode(void)
                 // Host-to-device data phase
                 int bytes = MIN(xfer_length, DBG_MAX_PACKET);
                 uint32_t count = tud_cdc_read(buf, bytes);
-                ESP_LOGW("usb_cdc", "tud_cdc_read(%d)\r\n", count);
                 if (count == bytes) {
                     xfer_length -= count;
                     usbdbg_data_out(buf, count);
@@ -222,7 +220,6 @@ int usb_cdc_init(void)
 
         ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
         // Create a task for tinyusb device stack
-        //xTaskCreatePinnedToCore(tusb_device_task, "tusb_device", USB_TASK_STACK_SIZE / sizeof(StackType_t), NULL, USB_TASK_PRIORITY, NULL, 0);
         xTaskCreatePinnedToCore(usb_cdc_loop, "usb_cdc", USB_CDC_TASK_STACK_SIZE / sizeof(StackType_t), NULL, USB_CDC_TASK_PRIORITY, NULL, 0);
     }
     return 0;
