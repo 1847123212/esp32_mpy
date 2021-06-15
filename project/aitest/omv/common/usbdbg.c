@@ -213,7 +213,6 @@ void usbdbg_data_out(void *buffer, int length)
                 if (xfer_bytes == xfer_length) {
                     // Set script ready flag
                     ESP_LOGW("usbdbg", "xfer_bytes(%d)\r\n", xfer_bytes);
-                    fflush(stdout);
                     script_ready = true;
 
                     // Set script running flag

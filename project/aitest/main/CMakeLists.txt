@@ -74,8 +74,12 @@ set(MICROPY_SOURCE_PORT
     ${PROJECT_DIR}/src/adapter/mpthreadport.c
     ${PROJECT_DIR}/src/adapter/machine_rtc.c
     ${PROJECT_DIR}/src/adapter/machine_sdcard.c
-    ${PROJECT_DIR}/src/usb/usb_cdc.c
+    ${PROJECT_DIR}/src/mpy_modules/modmatatalab.c
 )
+
+if(CONFIG_USB_ENABLED)
+list(APPEND MICROPY_SOURCE_PORT ${PROJECT_DIR}/src/usb/usb_cdc.c)
+endif()
 
 set(MICROPY_SOURCE_QSTR
     ${MICROPY_SOURCE_PY}

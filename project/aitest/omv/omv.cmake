@@ -12,7 +12,6 @@ set(OMV_SRCS
   ${PROJECT_DIR}/omv/common/ringbuf.c
   ${PROJECT_DIR}/omv/common/trace.c
   ${PROJECT_DIR}/omv/common/mutex.c
-  ${PROJECT_DIR}/omv/common/usbdbg.c
   
   ${PROJECT_DIR}/omv/imlib/agast.c
   ${PROJECT_DIR}/omv/imlib/apriltag.c
@@ -80,6 +79,9 @@ set(OMV_MOD_SRCS
 )
 
 list(APPEND OMV_SRCS "${OMV_MOD_SRCS}")
+if(CONFIG_USB_ENABLED)
+list(APPEND OMV_SRCS ${PROJECT_DIR}/omv/common/usbdbg.c)
+endif()
 
 set(OMV_INCLUDEDIRS
   ${PROJECT_DIR}/omv

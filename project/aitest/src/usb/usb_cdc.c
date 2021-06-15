@@ -39,6 +39,7 @@
 #include "tinyusb.h"
 #include "esp_log.h"
 
+#if CONFIG_USB_ENABLED
 #define DBG_MAX_PACKET      (64)
 #define IDE_BAUDRATE_SLOW   (921600)
 #define IDE_BAUDRATE_FAST   (12000000)
@@ -64,8 +65,6 @@ uint8_t rx_ringbuf_array[1024];
 uint8_t tx_ringbuf_array[1024];
 volatile ringbuf_t rx_ringbuf;
 volatile ringbuf_t tx_ringbuf;
-
-static void cdc_task(void);
 
 static bool cdc_rx_any(void) {
     return rx_ringbuf.iput != rx_ringbuf.iget;
@@ -100,7 +99,7 @@ uint32_t usb_cdc_get_buf(uint8_t *buf, uint32_t len)
     return i;
 }
 
-static void cdc_task(void)
+void cdc_task(void)
 {
     if ( tud_cdc_connected() ) {
         // connected and there are data available
@@ -125,7 +124,7 @@ static void cdc_task(void)
     }
 }
 
-static void cdc_task_debug_mode(void)
+void cdc_task_debug_mode(void)
 {
     if ( tud_cdc_connected() && tud_cdc_available() ) {
         uint8_t buf[DBG_MAX_PACKET];
@@ -177,23 +176,9 @@ void tud_cdc_line_coding_cb(uint8_t itf, cdc_line_coding_t const* p_line_coding)
     rx_ringbuf.iput = 0;
 }
 
-void usb_cdc_loop(void) {
-    while(true){
-        if (dbg_mode_enabled == true) {
-            cdc_task_debug_mode();
-        }else {
-            cdc_task();
-        }
-    }
-}
-
-void tusb_device_task(void)
+bool is_dbg_mode_enabled(void)
 {
-    while (1) {            
-        if (tud_task_event_ready()) {
-            tud_task();
-        }
-    }
+    return dbg_mode_enabled;
 }
 
 int usb_cdc_init(void)
@@ -219,8 +204,7 @@ int usb_cdc_init(void)
         };
 
         ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
-        // Create a task for tinyusb device stack
-        xTaskCreatePinnedToCore(usb_cdc_loop, "usb_cdc", USB_CDC_TASK_STACK_SIZE / sizeof(StackType_t), NULL, USB_CDC_TASK_PRIORITY, NULL, 0);
     }
     return 0;
 }
+#endif // CONFIG_USB_ENABLED

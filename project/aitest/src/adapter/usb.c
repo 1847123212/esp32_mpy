@@ -89,20 +89,4 @@ void usb_tx_strn(const char *str, size_t len) {
     }
 }
 
-uint32_t usb_cdc_buf_len()
-{
-    return ringbuf_avail((ringbuf_t*)&stdin_ringbuf);
-}
-
-uint32_t usb_cdc_get_buf(uint8_t *buf, uint32_t len)
-{
-    int i=0;
-    for (; i<len; i++) {
-        buf[i] = ringbuf_get((ringbuf_t*)&stdin_ringbuf);
-        if (buf[i] == -1) {
-            break;
-        }
-    }
-    return i;
-}
 #endif // CONFIG_USB_ENABLED

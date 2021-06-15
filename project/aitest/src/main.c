@@ -169,6 +169,7 @@ soft_reset:
     // run boot-up scripts
     pyexec_frozen_module("_boot.py");
     pyexec_file_if_exists("boot.py");
+    pyexec_file_if_exists("system.py");
     int ret = pyexec_file_if_exists("main_test.py");
     if (ret & PYEXEC_FORCED_EXIT) {
             goto soft_reset_exit;

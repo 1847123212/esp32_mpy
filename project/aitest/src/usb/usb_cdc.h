@@ -30,6 +30,7 @@
 #include "tusb.h"
 #include "py/ringbuf.h"
 
+#if CONFIG_USB_ENABLED
 extern volatile uint8_t  dbg_mode_enabled;
 extern uint8_t rx_ringbuf_array[1024];
 extern uint8_t tx_ringbuf_array[1024];
@@ -37,7 +38,9 @@ extern volatile ringbuf_t rx_ringbuf;
 extern volatile ringbuf_t tx_ringbuf;
 
 int usb_cdc_init(void);
-void usb_cdc_loop(void);
-uint32_t usb_cdc_buf_len();
+bool is_dbg_mode_enabled(void);
+void cdc_task_debug_mode(void);
+void cdc_task(void);
 uint32_t usb_cdc_get_buf(uint8_t *buf, uint32_t len);
+#endif // CONFIG_USB_ENABLED
 #endif // _USB_CDC_H
