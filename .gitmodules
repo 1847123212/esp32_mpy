@@ -6,3 +6,6 @@
 	path = submodule/esp-idf
 	url = ../../espressif/esp-idf
         branch = master
+[submodule "project/aitest/components/esp32-camera"]
+	path = project/aitest/components/esp32-camera
+	url = ../../espressif/esp32-camera
