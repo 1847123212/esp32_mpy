@@ -38,6 +38,8 @@
         #include "lv_examples/src/lv_demo_benchmark/lv_demo_benchmark.h"
     #elif defined CONFIG_LV_USE_DEMO_STRESS
         #include "lv_examples/src/lv_demo_stress/lv_demo_stress.h"
+    #elif defined CONFIG_LV_USE_DEMO_MUSIC
+        #include "lv_examples/src/lv_demo_music/lv_demo_music.h"
     #else
         #error "No demo application selected."
     #endif
@@ -209,6 +211,8 @@ static void create_demo_application(void)
         lv_demo_benchmark();
     #elif defined CONFIG_LV_USE_DEMO_STRESS
         lv_demo_stress();
+    #elif defined CONFIG_LV_USE_DEMO_MUSIC
+        lv_demo_music();
     #else
         #error "No demo application selected."
     #endif

@@ -33,10 +33,12 @@ menu "lv_examples configuration"
             bool "support landscape support."
             depends on LV_USE_DEMO_MUSIC
             default y
+
         config LV_DEMO_MUSIC_LARGE
             bool "support large font."
             depends on LV_USE_DEMO_MUSIC
-            default y
+            default n
+
         config LV_DEMO_MUSIC_AUTO_PLAY
             bool "a ~60 sec demo will be played.."
             depends on LV_USE_DEMO_MUSIC
