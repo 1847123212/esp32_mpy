@@ -13,7 +13,6 @@ extern "C" {
  *      INCLUDES
  *********************/
 #include <stdbool.h>
-#include "../lv_conf.h"
 #include "lvgl_spi_conf.h"
 #include "lvgl_tft/disp_driver.h"
 #include "lvgl_touch/touch_driver.h"
@@ -21,6 +20,21 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
+/* Maximal horizontal and vertical resolution to support by the library.*/
+#ifndef LV_HOR_RES_MAX
+#  ifdef CONFIG_LV_HOR_RES_MAX
+#    define LV_HOR_RES_MAX CONFIG_LV_HOR_RES_MAX
+#  else
+#    define  LV_HOR_RES_MAX          (320)
+#  endif
+#endif
+#ifndef LV_VER_RES_MAX
+#  ifdef CONFIG_LV_VER_RES_MAX
+#    define LV_VER_RES_MAX CONFIG_LV_VER_RES_MAX
+#  else
+#    define  LV_VER_RES_MAX          (240)
+#  endif
+#endif
 
 /* DISP_BUF_SIZE value doesn't have an special meaning, but it's the size
  * of the buffer(s) passed to LVGL as display buffers. The default values used
