@@ -44,6 +44,10 @@
 
     `esp32-camera: commit-id 3159d9d9fa6b431a3aab3e0f8c8741785ebcf425 2021.06.14`
 
+    `lvgl_esp32_drivers: commit-id cccb932d3c8b0035632bfff866d242308d0ce167 2021.06.08`
+
+    `lvgl: commit-id 7c1eb0064535f2d914b9dc885ebb2a2d0d73381d 2021.06.18`
+
 ## 5. 编译工程 ##
 
    进入目录 `esp32_mpy/submodule/esp-idf`，输入命令 `source ./export.sh` , 这个操作是初始化全部的环境变量

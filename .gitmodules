@@ -9,3 +9,9 @@
 [submodule "project/aitest/components/esp32-camera"]
 	path = project/aitest/components/esp32-camera
 	url = ../../espressif/esp32-camera
+[submodule "project/aitest/components/lvgl_esp32_drivers"]
+	path = project/aitest/components/lvgl_esp32_drivers
+	url = ../../YanMinge/lvgl_esp32_drivers
+[submodule "project/aitest/components/lvgl"]
+	path = project/aitest/components/lvgl
+	url = ../../lvgl/lvgl
