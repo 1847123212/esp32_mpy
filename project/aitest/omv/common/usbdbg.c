@@ -207,12 +207,10 @@ void usbdbg_data_out(void *buffer, int length)
             // than the total length (xfer_length) and the script will Not be executed.
             ESP_LOGD("usbdbg", "USBDBG_SCRIPT_EXEC");
             if (!script_running && !gc_is_locked()) {
-            //if (!script_running) {
                 vstr_add_strn(&script_buf, buffer, length);
                 xfer_bytes += length;
                 if (xfer_bytes == xfer_length) {
                     // Set script ready flag
-                    ESP_LOGW("usbdbg", "xfer_bytes(%d)\r\n", xfer_bytes);
                     script_ready = true;
 
                     // Set script running flag
@@ -222,7 +220,6 @@ void usbdbg_data_out(void *buffer, int length)
                     usbdbg_set_irq_enabled(false);
 
                     // Clear interrupt traceback
-                    ESP_LOGW("usbdbg", "mp_obj_exception_clear_traceback\r\n");
                     mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
                     //MICROPY_WRAP_MP_SCHED_EXCEPTION(mp_const_ide_interrupt);
                     MP_STATE_VM(mp_pending_exception) = mp_const_ide_interrupt;
@@ -350,8 +347,13 @@ void usbdbg_control(void *buffer, uint8_t request, uint32_t length)
                 // Remove the BASEPRI masking (if any)
                 // __set_BASEPRI(0);
 
-                // pendsv_nlr_jump(mp_const_ide_interrupt);
-                nlr_raise(mp_const_ide_interrupt);
+                // pendsv_nlr_jump(mp_const_ide_interrupt);               
+                MP_STATE_VM(mp_pending_exception) = mp_const_ide_interrupt;
+                #if MICROPY_ENABLE_SCHEDULER
+                    if (MP_STATE_VM(sched_state) == MP_SCHED_IDLE) {
+                        MP_STATE_VM(sched_state) = MP_SCHED_PENDING;
+                }
+                #endif
             }
             cmd = USBDBG_NONE;
             break;

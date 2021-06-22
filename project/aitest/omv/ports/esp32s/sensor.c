@@ -692,12 +692,12 @@ int sensor_snapshot(omv_sensor_t *sensor, image_t *image, uint32_t flags)
         return -1;
     }
   
-    ESP_LOGI(TAG, "Taking picture...");
+    ESP_LOGD(TAG, "Taking picture...");
     camera_fb_t *pic = esp_camera_fb_get();
     memcpy(buffer->data, pic->buf, pic->len);
     esp_camera_fb_return(pic);
     // use pic->buf to access the image
-    ESP_LOGI(TAG, "Picture taken! Its size was: %zu bytes", pic->len);
+    ESP_LOGD(TAG, "Picture taken! Its size was: %zu bytes", pic->len);
 
     // Fix the BPP.
     switch (sensor->pixformat) {
@@ -714,6 +714,9 @@ int sensor_snapshot(omv_sensor_t *sensor, image_t *image, uint32_t flags)
         }
         case OMV_PIXFORMAT_BAYER:
             MAIN_FB()->bpp = 3;
+            break;
+        case OMV_PIXFORMAT_JPEG:
+            MAIN_FB()->bpp = pic->len;
             break;
         default:
             MAIN_FB()->bpp = -1;
