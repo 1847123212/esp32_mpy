@@ -117,13 +117,11 @@ void mp_hal_stdout_tx_str(const char *str) {
 
 void mp_hal_stdout_tx_strn(const char *str, uint32_t len) {
     // Only release the GIL if many characters are being sent
-    bool release_gil = len > 20;
+    bool release_gil = len > 30;
     if (release_gil) {
         MP_THREAD_GIL_EXIT();
     }
     #if CONFIG_USB_ENABLED
-	
-    //usb_tx_strn(str, len);
     for (const char *top = str + len; str < top; str++) {
         ringbuf_put((ringbuf_t*)&tx_ringbuf, *str);
     }

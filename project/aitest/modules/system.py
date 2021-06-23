@@ -12,7 +12,6 @@ def cdc_loop():
             matatalab.cdc_debug_task()
         else:
             matatalab.cdc_task()
-        time.sleep(0.01)
 
 _thread.stack_size(SYSTEM_THREAD_STACK_SIZE)
 _thread.start_new_thread(cdc_loop,())

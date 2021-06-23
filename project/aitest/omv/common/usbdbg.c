@@ -50,8 +50,8 @@ extern uint32_t usb_cdc_get_buf(uint8_t *buf, uint32_t len);
 void usbdbg_init()
 {
     cmd = USBDBG_NONE;
-    script_ready=false;
-    script_running=false;
+    script_ready = false;
+    script_running = false;
     vstr_init(&script_buf, 5 * 1024);
     mp_const_ide_interrupt = mp_obj_new_exception_msg(&mp_type_Exception, "IDE interrupt");
 }
@@ -206,7 +206,8 @@ void usbdbg_data_out(void *buffer, int length)
             // at least once before the script is fully uploaded xfer_bytes will be less
             // than the total length (xfer_length) and the script will Not be executed.
             ESP_LOGD("usbdbg", "USBDBG_SCRIPT_EXEC");
-            if (!script_running && !gc_is_locked()) {
+            //if (!script_running && !gc_is_locked()) {
+            if(!script_running) {
                 vstr_add_strn(&script_buf, buffer, length);
                 xfer_bytes += length;
                 if (xfer_bytes == xfer_length) {
@@ -222,12 +223,7 @@ void usbdbg_data_out(void *buffer, int length)
                     // Clear interrupt traceback
                     mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
                     //MICROPY_WRAP_MP_SCHED_EXCEPTION(mp_const_ide_interrupt);
-                    MP_STATE_VM(mp_pending_exception) = mp_const_ide_interrupt;
-                    #if MICROPY_ENABLE_SCHEDULER
-                        if (MP_STATE_VM(sched_state) == MP_SCHED_IDLE) {
-                            MP_STATE_VM(sched_state) = MP_SCHED_PENDING;
-                    }
-                    #endif
+                    mp_sched_exception(mp_const_ide_interrupt);
                 }
             }
             break;
@@ -343,17 +339,8 @@ void usbdbg_control(void *buffer, uint8_t request, uint32_t length)
 
                 // interrupt running code by raising an exception
                 mp_obj_exception_clear_traceback(mp_const_ide_interrupt);
-
-                // Remove the BASEPRI masking (if any)
-                // __set_BASEPRI(0);
-
-                // pendsv_nlr_jump(mp_const_ide_interrupt);               
-                MP_STATE_VM(mp_pending_exception) = mp_const_ide_interrupt;
-                #if MICROPY_ENABLE_SCHEDULER
-                    if (MP_STATE_VM(sched_state) == MP_SCHED_IDLE) {
-                        MP_STATE_VM(sched_state) = MP_SCHED_PENDING;
-                }
-                #endif
+             
+                mp_sched_exception(mp_const_ide_interrupt);
             }
             cmd = USBDBG_NONE;
             break;

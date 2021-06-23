@@ -697,7 +697,7 @@ int sensor_snapshot(omv_sensor_t *sensor, image_t *image, uint32_t flags)
     memcpy(buffer->data, pic->buf, pic->len);
     esp_camera_fb_return(pic);
     // use pic->buf to access the image
-    ESP_LOGD(TAG, "Picture taken! Its size was: %zu bytes", pic->len);
+    ESP_LOGI(TAG, "Picture taken! Its size was: %zu bytes", pic->len);
 
     // Fix the BPP.
     switch (sensor->pixformat) {

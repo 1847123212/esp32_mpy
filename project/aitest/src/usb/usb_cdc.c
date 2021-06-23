@@ -33,6 +33,7 @@
 #include "queue.h"
 #include "semphr.h"
 #include "esp_task.h"
+#include "py/mpthread.h"
 
 #include "tusb.h"
 #include "usb_cdc.h"
@@ -45,11 +46,8 @@
 #define IDE_BAUDRATE_FAST   (12000000)
 
 // MicroPython runs as a task under FreeRTOS
-#define USB_CDC_TASK_PRIORITY        (ESP_TASK_PRIO_MIN + 1)
+#define USB_CDC_TASK_PRIORITY        (ESP_TASK_PRIO_MIN + 2)
 #define USB_CDC_TASK_STACK_SIZE      (16 * 1024)
-
-#define USB_TASK_PRIORITY            (ESP_TASK_PRIO_MIN + 1)
-#define USB_TASK_STACK_SIZE          (16 * 1024)
 
 #ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -112,7 +110,7 @@ void cdc_task(void)
 
         int chars = 0;
         while (cdc_tx_any()) {
-            if (chars < 64) {
+            if (chars < DBG_MAX_PACKET) {
                tud_cdc_write_char(cdc_tx_char());
                chars++;
             } else {
@@ -135,8 +133,8 @@ void cdc_task_debug_mode(void)
         }
         // assert buf[0] == '\x30';
         uint8_t request = buf[1];
-        uint32_t xfer_length = *((uint32_t*)(buf+2));
-        usbdbg_control(buf+6, request, xfer_length);
+        uint32_t xfer_length = *((uint32_t*)(buf + 2));
+        usbdbg_control(buf + 6, request, xfer_length);
 
         while (xfer_length) {
             if (request & 0x80) {
@@ -147,7 +145,6 @@ void cdc_task_debug_mode(void)
                     usbdbg_data_in(buf, bytes);
                     tud_cdc_write(buf, bytes);
                 }
-                tud_cdc_write_flush();
             } else {
                 // Host-to-device data phase
                 int bytes = MIN(xfer_length, DBG_MAX_PACKET);
@@ -158,6 +155,7 @@ void cdc_task_debug_mode(void)
                 }
             }
         }
+        tud_cdc_write_flush();
     }
 }
 
@@ -179,6 +177,16 @@ void tud_cdc_line_coding_cb(uint8_t itf, cdc_line_coding_t const* p_line_coding)
 bool is_dbg_mode_enabled(void)
 {
     return dbg_mode_enabled;
+}
+
+void cdc_loop() {
+    while(true) {
+        if(is_dbg_mode_enabled()) {
+            cdc_task_debug_mode();
+        } else {
+            cdc_task();
+        }
+    }
 }
 
 int usb_cdc_init(void)
@@ -204,6 +212,7 @@ int usb_cdc_init(void)
         };
 
         ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
+        xTaskCreatePinnedToCore(cdc_loop, "cdc_loop", USB_CDC_TASK_STACK_SIZE / sizeof(StackType_t), NULL, USB_CDC_TASK_PRIORITY, NULL, 1);
     }
     return 0;
 }

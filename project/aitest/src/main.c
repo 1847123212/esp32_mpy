@@ -137,7 +137,7 @@ void mp_task(void *pvParameter) {
         ESP_LOGI("mp_task=", "mp_task_heap(%p), mp_task_heap_size[%d]\n",mp_task_heap, mp_task_heap_size);
         if(mp_task_heap == NULL)
         {
-            ESP_LOGE("mp_task", "malloc heap for mp task failed, heap size if %d\n", mp_task_heap_size);
+            ESP_LOGI("mp_task", "malloc heap for mp task failed, heap size if %d\n", mp_task_heap_size);
             vTaskDelay(2000 / portTICK_PERIOD_MS);
         }
     } else {
@@ -169,22 +169,21 @@ soft_reset:
     // run boot-up scripts
     pyexec_frozen_module("_boot.py");
     pyexec_file_if_exists("boot.py");
-    pyexec_file_if_exists("system.py");
-    int ret = pyexec_file_if_exists("main_test.py");
-    if (ret & PYEXEC_FORCED_EXIT) {
-            goto soft_reset_exit;
-    }
-
+    //pyexec_file_if_exists("system.py");
     usbdbg_init();
-        // If there's no script ready, just re-exec REPL
+    // int ret = pyexec_file_if_exists("main.py");
+    // if (ret & PYEXEC_FORCED_EXIT) {
+    //     printf("soft_reset_exit\r\n");
+    //     goto soft_reset_exit;
+    // }
+
+    // If there's no script ready, just re-exec REPL
     while (!usbdbg_script_ready()) {
         nlr_buf_t nlr;
-
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         if (nlr_push(&nlr) == 0) {
             // enable IDE interrupt
             usbdbg_set_irq_enabled(true);
-
-            //__WFI();
             // run REPL
             if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
                 if (pyexec_raw_repl() != 0) {
@@ -207,35 +206,17 @@ soft_reset:
             usbdbg_set_irq_enabled(true);
 
             // Execute the script.
+            ESP_LOGI("mp_task", "Execute the script");
             pyexec_str(usbdbg_get_script());
             nlr_pop();
         } else {
+            ESP_LOGI("mp_task", "mp_obj_print_exception");
             mp_obj_print_exception(&mp_plat_print, (mp_obj_t)nlr.ret_val);
         }
     }
+    ESP_LOGI("mp_task", "usbdbg_wait_for_command");
     usbdbg_wait_for_command(1000);
-    usbdbg_set_irq_enabled(false);
-    // if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
-    //     int ret = pyexec_file_if_exists("main.py");
-    //     if (ret & PYEXEC_FORCED_EXIT) {
-    //         goto soft_reset_exit;
-    //     }
-    // }
-
-    // for (;;) {
-    //     if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
-    //         vprintf_like_t vprintf_log = esp_log_set_vprintf(vprintf_null);
-    //         if (pyexec_raw_repl() != 0) {
-    //             break;
-    //         }
-    //         esp_log_set_vprintf(vprintf_log);
-    //     } else {
-    //         if (pyexec_friendly_repl() != 0) {
-    //             break;
-    //         }
-    //     }
-    // }
-
+    goto soft_reset_exit;
 soft_reset_exit:
 
     #if MICROPY_BLUETOOTH_NIMBLE
