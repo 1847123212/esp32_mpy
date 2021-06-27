@@ -92,8 +92,8 @@ void mp_task(void *pvParameter) {
     uart_init();
     #endif
     machine_init();
-    fb_alloc_init0();
     framebuffer_init0();
+    fb_alloc_init0();
     sensor_init();
     // TODO: CONFIG_SPIRAM_SUPPORT is for 3.3 compatibility, remove after move to 4.0.
     #if CONFIG_ESP32_SPIRAM_SUPPORT || CONFIG_SPIRAM_SUPPORT
